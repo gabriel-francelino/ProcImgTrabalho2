@@ -15,75 +15,41 @@
 void decode(image In)
 {
     FILE *file;
-    char name[100];
-    int fsize=0, id=0;
-    unsigned char byte;
-    int sizePos = 0, j=1;
-    unsigned int pixel = 0, byteAux = 0;
-    
-    for (int i = 0; i < In->nc*In->nr; i++)
+    char name[100] = "";
+    int fsize, sizeIn = In->nc*In->nr, n=2, j=0;
+    unsigned char byte = 0;
+    unsigned int pixel, byteAux = 0;
+
+    for (int i = 0; i < sizeIn; i++)
     {
-        // Transformando para hexadecimal
         pixel = In->px[i];
-        printf("\nPixel: %x", pixel);
-
-        // Separando os R, G, B
-        int R, G, B;
-        R = (pixel >> 16) & 0xFF;
-        G = (pixel >> 8) & 0xFF;
-        B = (pixel) & 0xFF;
-        printf("\nHex R: %x, G: %x, B: %x", R, G, B);
-
-        if (j==1)
+        //byteAux = (pixel >> (n*8)) & 0xFF;
+        if (n>0)
         {
-            //R = R & 0xFE;
-            byteAux = (byteAux << 1) | (R & 0x1);
-        } else if (j==2)
+            byteAux = (pixel >> (n*8)) & 0xFF;
+        }else
         {
-            //G = G | 0x01;
-            byteAux = (byteAux << 1) | (G & 0x1);
-        } else if (j==3)
-        {
-            //B = B & 0xFE;
-            byteAux = (byteAux << 1) | (B & 0x1);
-        } else if (j==4)
-        {
-            //R = R & 0xFE;
-            byteAux = (byteAux << 1) | (R & 0x1);
-        } else if (j==5)
-        {
-            //G = G & 0xFE;
-            byteAux = (byteAux << 1) | (G & 0x1);
-        } else if (j==6)
-        {
-            //B = B & 0xFE;
-            byteAux = (byteAux << 1) | (B & 0x1);
-        } else if (j==7)
-        {
-            //R = R & 0xFE;
-            byteAux = (byteAux << 1) | (R & 0x1);
-        }else if (j==8)
-        {
-            //G = G | 0x01;
-            byteAux = (byteAux << 1) | (G & 0x1);
+            byteAux = (pixel) & 0xFF;
         }
-
-        j++;  
-
-        if (j>8)
+        int lsb = byteAux & 0x1;
+        n <= 0 ? n=2 : n--;
+        printf("[%d] => SizeIn: %d\t Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n", i, sizeIn, pixel, byteAux, lsb, n);
+        byte = (byte << 1) | lsb;
+        if (j>=7)
         {
-            printf("\nBin [%d]: %x\n", j-1, byteAux);
-            if (byteAux == 00000000)
+            char temp[2] = {(char)byte, '\0'};
+            strcat(name, temp);
+            printf("\n\t[j=%d] => IndexName: %s | char: %c\t byte: %b\t hexa: %x\n", j, name, byte, byte, byte);
+            if (byte == 0)
             {
-                sizePos = i + 1;
-                i = (In->nc*In->nr) + 1;
-            }
-            
-            name[id] = byteAux;
-            byteAux = 0;
-            id++;
-            j=1;
-        }
+                i = sizeIn+1;
+            }  
+            byte = 0;
+            j=0;
+        } else
+        {
+            j++;
+        }   
     }
         
     printf("File name: %s\n", name);

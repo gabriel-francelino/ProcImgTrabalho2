@@ -18,4 +18,4 @@ $(TARGET): $(OBJECTS);\
     $(CC) $(CCFLAGS) -c $<
 
 clean:;\
-    rm -f *.o *-*.pgm $(TARGET);\
+    rm -f *.o *-*.pgm A.txt code.c giphy.gif $(TARGET);\
