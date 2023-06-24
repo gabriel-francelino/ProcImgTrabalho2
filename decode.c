@@ -23,14 +23,7 @@ void decode(image In)
     for (int i = 0; i < sizeIn; i++)
     {
         pixel = In->px[i];
-        //byteAux = (pixel >> (n*8)) & 0xFF;
-        if (n>0)
-        {
-            byteAux = (pixel >> (n*8)) & 0xFF;
-        }else
-        {
-            byteAux = (pixel) & 0xFF;
-        }
+        byteAux = (pixel >> (n*8)) & 0xFF;
         int lsb = byteAux & 0x1;
         n <= 0 ? n=2 : n--;
         //printf("[%d] => SizeIn: %d\t Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n", i, sizeIn, pixel, byteAux, lsb, n);
