@@ -54,63 +54,7 @@ void decode(image In)
         
     printf("File name: %s\n", name);
     
-    // decode file size
-    byteAux = 0;
-    for (int i = sizePos; i <= sizePos + 32; i++)
-    {
-        pixel = In->px[i];
-        printf("\nPixel: %x", pixel);
-
-        int R, G, B;
-        R = (pixel >> 16) & 0xFF;
-        G = (pixel >> 8) & 0xFF;
-        B = (pixel) & 0xFF;
-
-        if (j==1)
-        {
-            //R = R & 0xFE;
-            byteAux = (byteAux << 1) | (R & 0x1);
-        } else if (j==2)
-        {
-            //G = G | 0x01;
-            byteAux = (byteAux << 1) | (G & 0x1);
-        } else if (j==3)
-        {
-            //B = B & 0xFE;
-            byteAux = (byteAux << 1) | (B & 0x1);
-        } else if (j==4)
-        {
-            //R = R & 0xFE;
-            byteAux = (byteAux << 1) | (R & 0x1);
-        } else if (j==5)
-        {
-            //G = G & 0xFE;
-            byteAux = (byteAux << 1) | (G & 0x1);
-        } else if (j==6)
-        {
-            //B = B & 0xFE;
-            byteAux = (byteAux << 1) | (B & 0x1);
-        } else if (j==7)
-        {
-            //R = R & 0xFE;
-            byteAux = (byteAux << 1) | (R & 0x1);
-        }else if (j==8)
-        {
-            //G = G | 0x01;
-            byteAux = (byteAux << 1) | (G & 0x1);
-        }
-
-        j++;  
-
-        if (j>8)
-        {
-            printf("\nBin [%d]: %x\n", j-1, byteAux);            
-            fsize = (fsize << 8) | byteAux;
-            byteAux = 0;
-            j=1;
-        }
-    }
-    
+    // decode file size        
     
     printf("File size: %d bytes\n", fsize);
     
