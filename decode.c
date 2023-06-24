@@ -15,7 +15,7 @@
 void decode(image In)
 {
     FILE *file;
-    char name[100];
+    char name[100] = "";
     int fsize, sizeIn = In->nc*In->nr, n=2, j=0;
     unsigned char byte = 0;
     unsigned int pixel, byteAux = 0;
@@ -33,17 +33,19 @@ void decode(image In)
         }
         int lsb = byteAux & 0x1;
         n <= 0 ? n=2 : n--;
-        printf("Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n",pixel, byteAux, lsb, n);
-        byte = (byte << 0x1) | lsb;
-        if (j>8)
+        printf("[%d] => SizeIn: %d\t Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n", i, sizeIn, pixel, byteAux, lsb, n);
+        byte = (byte << 1) | lsb;
+        if (j>=7)
         {
-            printf("\nchar: %c\t bin: %b\t hexa: %x\n", byte, byte, byte);
-            name[(i+1)/8] == byte;
-            j=0;
+            char temp[2] = {(char)byte, '\0'};
+            strcat(name, temp);
+            printf("\n\t[j=%d] => IndexName: %s | char: %c\t byte: %b\t hexa: %x\n", j, name, byte, byte, byte);
             if (byte == 0)
             {
                 i = sizeIn+1;
             }  
+            byte = 0;
+            j=0;
         } else
         {
             j++;
