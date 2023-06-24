@@ -16,8 +16,39 @@ void decode(image In)
 {
     FILE *file;
     char name[100];
-    int fsize;
-    unsigned char byte;
+    int fsize, sizeIn = In->nc*In->nr, n=2, j=0;
+    unsigned char byte = 0;
+    unsigned int pixel, byteAux = 0;
+
+    for (int i = 0; i < sizeIn; i++)
+    {
+        pixel = In->px[i];
+        //byteAux = (pixel >> (n*8)) & 0xFF;
+        if (n>0)
+        {
+            byteAux = (pixel >> (n*8)) & 0xFF;
+        }else
+        {
+            byteAux = (pixel) & 0xFF;
+        }
+        int lsb = byteAux & 0x1;
+        n <= 0 ? n=2 : n--;
+        printf("Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n",pixel, byteAux, lsb, n);
+        byte = (byte << 0x1) | lsb;
+        if (j>8)
+        {
+            printf("\nchar: %c\t bin: %b\t hexa: %x\n", byte, byte, byte);
+            name[(i+1)/8] == byte;
+            j=0;
+            if (byte == 0)
+            {
+                i = sizeIn+1;
+            }  
+        } else
+        {
+            j++;
+        }   
+    }
     
     // decode the name
     
