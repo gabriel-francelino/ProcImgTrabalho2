@@ -16,7 +16,7 @@ void decode(image In)
 {
     FILE *file;
     char name[100] = "";
-    int fsize, sizeIn = In->nc*In->nr, n=2, j=0;
+    int fsize, sizeIn = In->nc*In->nr, sizeId = 0, contentId = 0, n=2, j=0;
     unsigned char byte = 0;
     unsigned int pixel, byteAux = 0;
 
@@ -33,15 +33,16 @@ void decode(image In)
         }
         int lsb = byteAux & 0x1;
         n <= 0 ? n=2 : n--;
-        printf("[%d] => SizeIn: %d\t Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n", i, sizeIn, pixel, byteAux, lsb, n);
+        //printf("[%d] => SizeIn: %d\t Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n", i, sizeIn, pixel, byteAux, lsb, n);
         byte = (byte << 1) | lsb;
         if (j>=7)
         {
             char temp[2] = {(char)byte, '\0'};
             strcat(name, temp);
-            printf("\n\t[j=%d] => IndexName: %s | char: %c\t byte: %b\t hexa: %x\n", j, name, byte, byte, byte);
+            //printf("\n\t[j=%d] => IndexName: %s | char: %c\t byte: %b\t hexa: %x\n", j, name, byte, byte, byte);
             if (byte == 0)
             {
+                sizeId = i + 1;
                 i = sizeIn+1;
             }  
             byte = 0;
@@ -54,8 +55,36 @@ void decode(image In)
         
     printf("File name: %s\n", name);
     
-    // decode file size        
-    
+    // decode file size
+    for (int i = sizeId; i < sizeId + 32; i++)
+    {
+        pixel = In->px[i];
+
+        if (n>0)
+        {
+            byteAux = (pixel >> (n*8)) & 0xFF;
+        }else
+        {
+            byteAux = (pixel) & 0xFF;
+        }
+        int lsb = byteAux & 0x1;
+        n <= 0 ? n=2 : n--;
+        printf("[%d] => SizeIn: %d\t Pixel: %x\t RGB: %x\t lsb: %d\t n: %d\n", i, sizeIn, pixel, byteAux, lsb, n);
+        byte = (byte << 1) | lsb;
+        if (j>=7)
+        {
+            printf("\n\t[j=%d] => IndexName: %s | char: %c\t byte: %b\t hexa: %x\n", j, name, byte, byte, byte);
+            //byte = 0;
+            j=0;
+        } else
+        {
+            j++;
+        }   
+    }
+            
+    fsize = byte;
+    byte = 0;
+    contentId = sizeId + 33; // Posição dos bytes de conteúdo: (sizeId + 32) + 1
     printf("File size: %d bytes\n", fsize);
     
     // decode file
