@@ -1,3 +1,13 @@
+/*+=============================================================
+2 | UNIFAL = Universidade Federal de Alfenas.
+3 | BACHARELADO EM CIENCIA DA COMPUTACAO.
+4 | Trabalho . . : Esteganografia
+5 | Disciplina . : Processamento de Imagens
+6 | Professor. . : Luiz Eduardo da Silva
+7 | Aluno . . . .: Gabriel Francelino Nascimento
+8 | Data . . . . : 24/06/2023
+9 +=============================================================*/
+
 #define CREATOR "# CREATOR: Image Processing using C-Ansi - ByDu\n"
 
 typedef struct
