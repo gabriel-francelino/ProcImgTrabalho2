@@ -15,22 +15,26 @@
 void decode(image In)
 {
     FILE *file;
-    char name[100] = "";
-    int fsize, sizeIn = In->nc * In->nr, sizeId = 0, contentId = 0, n = 2, j = 0;
-    unsigned char byte = 0;
+    char name[100] = ""; //new file name
+    int fsize;  // new file's content size
+    int sizeIn = In->nc * In->nr; // input file size
+    int sizeId = 0, contentId = 0; // index of size and content 
+    int n = 2, j = 0; // iterator
+    unsigned char byte = 0; // content
     unsigned int pixel, byteAux = 0;
 
+    // decode file name
     for (int i = 0; i < sizeIn; i++)
     {
         pixel = In->px[i];
-        byteAux = (pixel >> (n * 8)) & 0xFF;
-        int lsb = byteAux & 0x1;
-        n <= 0 ? n = 2 : n--;
-        byte = (byte << 1) | lsb;
+        byteAux = (pixel >> (n * 8)) & 0xFF; // isolated bytes of R, G or B colors
+        int lsb = byteAux & 0x1; // Least Significant Bits
+        n <= 0 ? n = 2 : n--; // iterators used to isolate R, G and B
+        byte = (byte << 1) | lsb; // include the rightmost bit of the byte
         if (j >= 7)
         {
-            char temp[2] = {(char)byte, '\0'};
-            strcat(name, temp);
+            char temp[2] = {(char)byte, '\0'}; // convert from unsigned char to string
+            strcat(name, temp);  // append the characters of the name
             if (byte == 0)
             {
                 sizeId = i + 1;
@@ -48,20 +52,20 @@ void decode(image In)
     printf("File name: %s\n", name);
 
     // decode file size
-    uint32_t binSize = 0;
+    uint32_t binSize = 0; // uint32_t type is used to store 32 bits
     for (int i = sizeId; i < sizeId + 32; i++)
     {
         pixel = In->px[i];
         byteAux = (pixel >> (n * 8)) & 0xFF;
         int lsb = byteAux & 0x1;
         n <= 0 ? n = 2 : n--;
-        binSize = (binSize << 1) | lsb;
-        j >= 7 ? j=0 : j++;
+        binSize = (binSize << 1) | lsb; // add the 32 bits in the variable
+        j >= 7 ? j=0 : j++; // iterator used to define the number of bits 
     }
 
     fsize = binSize;
     byte = 0;
-    contentId = sizeId + 32;
+    contentId = sizeId + 32; // index of first content pixel
     printf("ContentId: %d\n", contentId);
     printf("File size: %d bytes\n", fsize);
 
