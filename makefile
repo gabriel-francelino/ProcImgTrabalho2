@@ -19,3 +19,6 @@ $(TARGET): $(OBJECTS);\
 
 clean:;\
     rm -f *.o *-*.pgm A.txt code.c giphy.gif $(TARGET);\
+
+run:;\
+    ./decode cores-e.ppm & ./decode jardim-e.ppm & ./decode porto-e.ppm;\
