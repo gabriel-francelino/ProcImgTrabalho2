@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <math.h>
 #include "imagelib.h"
 #define DEBUG(x) x
@@ -31,7 +30,7 @@ void decode(image In)
     int sizeId = 0, contentId = 0; // index of size and content 
     int n = 2, j = 0; // iterator
     unsigned char byte = 0; // content
-    unsigned int pixel, byteAux = 0;
+    unsigned int pixel, byteAux = 0, binSize = 0;
 
     // decode file name
     for (int i = 0; i < sizeIn; i++)
@@ -62,7 +61,6 @@ void decode(image In)
     printf("File name: %s\n", name);
 
     // decode file size
-    uint32_t binSize = 0; // uint32_t type is used to store 32 bits
     for (int i = sizeId; i < sizeId + 32; i++)
     {
         pixel = In->px[i];
@@ -76,7 +74,6 @@ void decode(image In)
     fsize = binSize;
     byte = 0;
     contentId = sizeId + 32; // index of first content pixel
-    printf("ContentId: %d\n", contentId);
     printf("File size: %d bytes\n", fsize);
 
     // decode file
