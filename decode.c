@@ -21,29 +21,35 @@
 #include "imagelib.h"
 #define DEBUG(x) x
 
+int isolateBit(unsigned int pixel, int n)
+{
+    int byteAux = (pixel >> (n * 8)) & 0xFF; // isolated bytes of R, G or B colors
+    int lsb = byteAux & 0x1;                 // Least Significant Bits
+    return lsb;
+}
+
 void decode(image In)
 {
     FILE *file;
-    char name[100] = ""; //new file name
-    int fsize;  // new file's content size
-    int sizeIn = In->nc * In->nr; // input file size
-    int sizeId = 0, contentId = 0; // index of size and content 
-    int n = 2, j = 0; // iterator
-    unsigned char byte = 0; // content
-    unsigned int pixel, byteAux = 0, binSize = 0;
+    char name[100] = "";           // new file name
+    int fsize;                     // new file's content size
+    int sizeIn = In->nc * In->nr;  // input file size
+    int sizeId = 0, contentId = 0; // index of size and content
+    int n = 2, j = 0;              // iterator
+    unsigned char byte = 0;        // content
+    unsigned int pixel, binSize = 0;
 
     // decode file name
     for (int i = 0; i < sizeIn; i++)
     {
         pixel = In->px[i];
-        byteAux = (pixel >> (n * 8)) & 0xFF; // isolated bytes of R, G or B colors
-        int lsb = byteAux & 0x1; // Least Significant Bits
-        n <= 0 ? n = 2 : n--; // iterators used to isolate R, G and B
-        byte = (byte << 1) | lsb; // include the rightmost bit of the byte
+        int lsb = isolateBit(pixel, n); // Least Significant Bits
+        byte = (byte << 1) | lsb;       // include the rightmost bit of the byte
+        n <= 0 ? n = 2 : n--;           // iterators used to isolate R, G and B
         if (j >= 7)
         {
             char temp[2] = {(char)byte, '\0'}; // convert from unsigned char to string
-            strcat(name, temp);  // append the characters of the name
+            strcat(name, temp);                // append the characters of the name
             if (byte == 0)
             {
                 sizeId = i + 1;
@@ -64,11 +70,10 @@ void decode(image In)
     for (int i = sizeId; i < sizeId + 32; i++)
     {
         pixel = In->px[i];
-        byteAux = (pixel >> (n * 8)) & 0xFF;
-        int lsb = byteAux & 0x1;
-        n <= 0 ? n = 2 : n--;
+        int lsb = isolateBit(pixel, n);
         binSize = (binSize << 1) | lsb; // add the 32 bits in the variable
-        j >= 7 ? j=0 : j++; // iterator used to define the number of bits 
+        n <= 0 ? n = 2 : n--;
+        j >= 7 ? j = 0 : j++; // iterator used to define the number of bits
     }
 
     fsize = binSize;
@@ -77,7 +82,7 @@ void decode(image In)
     printf("File size: %d bytes\n", fsize);
 
     // decode file
-    file = fopen(name, "wb"); 
+    file = fopen(name, "wb");
     if (!file)
     {
         printf("Cannot create file %s\n", name);
@@ -90,10 +95,9 @@ void decode(image In)
         {
             pixel = In->px[contentId];
             contentId++;
-            byteAux = (pixel >> (n * 8)) & 0xFF;
-            int lsb = byteAux & 0x1;
-            n <= 0 ? n = 2 : n--;
+            int lsb = isolateBit(pixel, n);
             byte = (byte << 1) | lsb;
+            n <= 0 ? n = 2 : n--;
         }
 
         fwrite(&byte, sizeof(byte), 1, file);
